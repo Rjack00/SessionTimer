@@ -1,35 +1,118 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const defaultSession = 25;
+  const defaultBreak = 5;
+
+  const [todaysDate, setTodaysDate] = useState("");
+  const [sessionLength, setSessionLength] = useState(defaultSession);
+  const [breakLength, setBreakLength] = useState(defaultBreak);
+  const [isSession, setIsSession] = useState(true);
+  const [timeRemaining, setTimeRemaining] = useState(defaultSession * 60);
+  const [isRunning, setIsRunning] = useState(false);
+  const [timerAtDefault, setTimerAtDefault] = useState(true);
+  const [timerLabel, setTimerLabel] = useState("Session");
+  const [startStop, setStartStop] = useState("Start");
+
+  const timerId = useRef(null);
+  const beepRef = useRef(null);
+
+  // Date updater
+  useEffect(() => {
+    const updateDate = () => {
+      const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      };
+      setTodaysDate(new Date().toLocaleString(undefined, options));
+    };
+    updateDate();
+    const dateInterval = setInterval(updateDate, 10000);
+    return () => clearInterval(dateInterval);
+  }, []);
+
+  // Start timer
+  const startTimer = () => {
+    clearInterval(timerId.current);
+    setTimerAtDefault(false);
+    setIsRunning(true);
+
+    const endTime = Date.now() + timeRemaining * 1000;
+
+    timerId.current = setInterval(() => {
+      const secondsLeft = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+      setTimeRemaining(secondsLeft);
+      setStartStop("Pause");
+
+      if (secondsLeft <= 0) {
+        beepRef.current.play();
+        clearInterval(timerId.current);
+        setTimeout(switchPeriod, 1000);
+      }
+    }, 1000);
+  };
+
+  // Switch between session/break
+  const switchPeriod = () => {
+    const nextIsSession = !isSession;
+    const newTime = nextIsSession ? sessionLength * 60 : breakLength * 60;
+    setIsSession(nextIsSession);
+    setTimeRemaining(newTime);
+    setTimerLabel(nextIsSession ? "Session" : "Break");
+    setIsRunning(false); // isn't this already false??
+    startTimer();
+  };
+
+  const pauseTimer = () => {
+    clearInterval(timerId.current);
+    setIsRunning(false);
+    setStartStop("Start");
+  };
+
+  const resetTimer = () => {
+    clearInterval(timerId.current);
+    setSessionLength(defaultSession);
+    setBreakLength(defaultBreak);
+    setTimeRemaining(defaultSession * 60);
+    setTimerLabel("Session");
+    setIsRunning(false);
+    setStartStop("Start");
+    setTimerAtDefault(true);
+    setIsSession(true);
+    beepRef.current.pause();
+    beepRef.current.currentTime = 0;
+  }
+
+  const handleTimeChange = (type, operation) => {
+    if (!timerAtDefault) {
+      resetTimer();
+      return;
+    }
+    if ((type === "session" && sessionLength >= 60) || (type === "break" && breakLength >= 60)) {
+      const typeTitle = type.charAt(0).toUpperCase() + type.slice(1);
+      alert(`${typeTitle} cannot be more than 60`);
+      return;
+    }
+    if (type === "session") {
+      const newVal = operation === "increment" ? sessionLength +1 : Math.max(1, sessionLength -1);
+      setSessionLength(newVal);
+      setTimeRemaining(newVal * 60);
+    } else {
+      const newVal = operation === "increment" ? breakLength +1: Math.max(1, breakLength -1);
+      setBreakLength(newVal);
+    }
+  }
+
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      
     </>
   )
 }
 
-export default App
