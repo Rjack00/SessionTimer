@@ -1,4 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
+import DateDisplay from "./components/DateDisplay";
+import AudioPlayer from "./components/AudioPlayer";
+import Controls from "./components/Controls";
+import LengthControl from "./components/LengthControl";
+import TimerDisplay from "./components/TimerDisplay";
 import './App.css'
 
 export default function App() {
@@ -111,8 +116,32 @@ export default function App() {
 
   return (
     <>
+      <DateDisplay todaysDate={todaysDate} />
+      <h1>Session & Break Timer</h1>
+      <LengthControl
+        label="Session Length"
+        length={sessionLength}
+        onIncrement={() => handleTimeChange("session", "increment")}
+        onDecrement={() => handleTimeChange("session", "decremnt")}
+      />
+      <LengthControl 
+        label="Break Length"
+        length={breakLength}
+        onIncrement={() => handleTimeChange("break", "increment")}
+        onDecrement={() => handleTimeChange("break", "decremnt")}
+      />
+
+      <TimerDisplay timerLabel={timerLabel} timeRemaining={timeRemaining} />
       
+      <Controls 
+        startStopText={startStop}
+        onStartStop={!isRunning ? startTimer : pauseTimer}
+        onReset={resetTimer}
+      />
+
+      <AudioPlayer ref={beepRef} src={"./src/assets/new-notification-08-352461.mp3"} />
+
     </>
-  )
+  );
 }
 

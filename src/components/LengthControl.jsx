@@ -1,5 +1,5 @@
 export default function LengthControl({label, length, onIncrement, onDecrement}) {
-    const idPrefix = label.tolowerCase().split(" ")[0];
+    const idPrefix = label.toLowerCase().split(" ")[0];
 
     return (
         <div id={`${idPrefix}-length-container`}>
