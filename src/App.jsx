@@ -41,13 +41,15 @@ export default function App() {
     return () => clearInterval(dateInterval);
   }, []);
 
+
   // Start timer
-  const startTimer = () => {
+  const startTimer = (duration = timeRemaining) => {
+    console.log("duration: ", duration);
     clearInterval(timerId.current);
     setTimerAtDefault(false);
     setIsRunning(true);
 
-    const endTime = Date.now() + timeRemaining * 1000;
+    const endTime = Date.now() + duration * 1000;
 
     timerId.current = setInterval(() => {
       const secondsLeft = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
@@ -64,13 +66,16 @@ export default function App() {
 
   // Switch between session/break
   const switchPeriod = () => {
-    const nextIsSession = !isSession;
-    const newTime = nextIsSession ? sessionLength * 60 : breakLength * 60;
-    setIsSession(nextIsSession);
-    setTimeRemaining(newTime);
-    setTimerLabel(nextIsSession ? "Session" : "Break");
-    setIsRunning(false); // isn't this already false??
-    startTimer();
+    setIsSession((prevIsSession) => {
+      const nextIsSession = !prevIsSession;
+      const newTime = nextIsSession ? sessionLength * 60 : breakLength * 60;
+      setTimeRemaining(newTime);
+      setTimerLabel(nextIsSession ? "Session" : "Break");
+      setIsRunning(false); // isn't this already false??
+      startTimer(newTime);
+      return nextIsSession;
+    });
+    
   };
 
   const pauseTimer = () => {
@@ -122,20 +127,20 @@ export default function App() {
         label="Session Length"
         length={sessionLength}
         onIncrement={() => handleTimeChange("session", "increment")}
-        onDecrement={() => handleTimeChange("session", "decremnt")}
+        onDecrement={() => handleTimeChange("session", "decrement")}
       />
       <LengthControl 
         label="Break Length"
         length={breakLength}
         onIncrement={() => handleTimeChange("break", "increment")}
-        onDecrement={() => handleTimeChange("break", "decremnt")}
+        onDecrement={() => handleTimeChange("break", "decrement")}
       />
 
       <TimerDisplay timerLabel={timerLabel} timeRemaining={timeRemaining} />
       
       <Controls 
         startStopText={startStop}
-        onStartStop={!isRunning ? startTimer : pauseTimer}
+        onStartStop={!isRunning ? () => startTimer() : pauseTimer}
         onReset={resetTimer}
       />
 
