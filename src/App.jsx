@@ -136,7 +136,11 @@ export default function App() {
         onDecrement={() => handleTimeChange("break", "decrement")}
       />
 
-      <TimerDisplay timerLabel={timerLabel} timeRemaining={timeRemaining} />
+      <TimerDisplay 
+        timerLabel={timerLabel} 
+        timeRemaining={timeRemaining} 
+        style={{color: timeRemaining <= 59 ? "red" : "white"}}
+      />
       
       <Controls 
         startStopText={startStop}
