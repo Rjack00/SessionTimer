@@ -1,3 +1,5 @@
+import "./LengthControl.css";
+
 export default function LengthControl({label, length, onIncrement, onDecrement}) {
     const idPrefix = label.toLowerCase().split(" ")[0];
 

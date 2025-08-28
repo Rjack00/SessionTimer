@@ -1,3 +1,5 @@
+import "./TimerDisplay.css";
+
 export default function TimerDisplay({timerLabel, timeRemaining}) {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;

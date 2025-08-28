@@ -1,6 +1,8 @@
+import "./Controls.css";
+
 export default function Controls ({ startStopText, onStartStop, onReset}) {
     return (
-        <div>
+        <div id="controls-container">
             <button id="start_stop" onClick={onStartStop}>
                 {startStopText}
             </button>

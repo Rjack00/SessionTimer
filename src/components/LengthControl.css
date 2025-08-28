@@ -1,0 +1,35 @@
+#session-length-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 5px 0;
+}
+#break-length-container {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 20px 0;
+}
+
+
+
+#session-label {
+    margin-right: 5px;
+
+}
+#break-label {
+    margin-right: 5px;
+}
+
+
+
+#session-length {
+    margin-right: 10px;
+    border: solid 2px white;
+    padding: 0 2px;
+    width: 25px;
+}
+#break-length {
+    margin-right: 10px;
+    border: solid 2px white;
+    padding: 0 2px;
+    width: 25px;
+}

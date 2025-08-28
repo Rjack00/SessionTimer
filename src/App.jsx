@@ -120,7 +120,7 @@ export default function App() {
 
 
   return (
-    <>
+    <div className='app-container'>
       <DateDisplay todaysDate={todaysDate} />
       <h1>Session & Break Timer</h1>
       <LengthControl
@@ -146,7 +146,7 @@ export default function App() {
 
       <AudioPlayer ref={beepRef} src={"./src/assets/new-notification-08-352461.mp3"} />
 
-    </>
+    </div>
   );
 }
 
